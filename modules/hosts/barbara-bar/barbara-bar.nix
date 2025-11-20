@@ -4,6 +4,7 @@
   lib,
   ...
 }: {
+  flake.inspector = den.aspects.barbara-bar;
   den.aspects.barbara-bar = {
     includes = [
       <bootloader/grub>
@@ -11,14 +12,16 @@
       <hetzner/qemu/kernel-modules>
       <fleet/facter>
       <fleet/sops>
-      # <fleet-server/stdenv>
+      # <fleet/mailserver>
+      den.aspects.mailserver
     ];
 
     nixos = {pkgs, ...}: {
       environment.systemPackages = [pkgs.hello];
       networking = {
-        hostName = "barbarabar";
-        domain = "barbara.bar";
+        hostName = lib.mkForce "barbara";
+        domain = lib.mkForce "barbara.bar";
+        fqdn = lib.mkForce "barbara.bar";
       };
     };
 
