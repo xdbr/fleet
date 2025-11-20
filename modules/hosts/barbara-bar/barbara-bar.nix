@@ -17,6 +17,10 @@
 
     nixos = {pkgs, ...}: {
       environment.systemPackages = [pkgs.hello];
+      networking = {
+        hostName = "barbarabar";
+        domain = "barbara.bar";
+      };
     };
 
     provides.dbr = {user, ...}: {
