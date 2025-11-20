@@ -1,0 +1,9 @@
+keys:
+  - &admin_dbr age1pp8jdajshec7ht2z8949urzxt05fklwn0cpzwa9rf4k55nt69c4qmxtnqr
+  - &server_barbarabar age1wqp8070pyzp5vzwwq8r2rs3yxza8pss9kq968ns888ft07hksc5qlm7jf6
+creation_rules:
+  - path_regex: secrets.yaml$
+    key_groups:
+    - age:
+      - *admin_dbr
+      - *server_barbarabar
