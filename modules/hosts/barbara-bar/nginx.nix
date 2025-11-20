@@ -21,6 +21,15 @@
         };
       };
 
+      "www.barbara.bar" = {
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          return = "200 '<html><body>This is www.barbara.bar</body></html>'";
+          extraConfig = ''default_type text/html;'';
+        };
+      };
+
       "bar.barbara.bar" = {
         forceSSL = true;
         enableACME = true;

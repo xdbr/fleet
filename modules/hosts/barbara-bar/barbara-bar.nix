@@ -4,7 +4,6 @@
   lib,
   ...
 }: {
-  # fleet.barbara-bar = {
   den.aspects.barbara-bar = {
     includes = [
       <bootloader/grub>
@@ -23,13 +22,6 @@
       };
     };
 
-    provides.dbr = {user, ...}: {
-      # includes = [
-      #   # <den/define-user>
-      #   # <den/primary-user> # alice is admin always.
-      # ];
-      homeManager.programs.helix.enable = user.name == "dbr";
-    };
     homeManager.programs.direnv.enable = true;
   };
 }
