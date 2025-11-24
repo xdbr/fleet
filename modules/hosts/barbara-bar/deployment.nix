@@ -5,6 +5,7 @@
 }: {
   flake.deploy.nodes."barbara-bar" = {
     sshUser = "dbr";
+    sshOpts = ["-p" "422"];
     hostname = "46.62.229.209";
     interactiveSudo = false;
     autoRollback = true;
