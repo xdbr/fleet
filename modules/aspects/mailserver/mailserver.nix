@@ -3,9 +3,12 @@
     nixos = {config, ...}: {
       imports = [inputs.simple-nixos-mailserver.nixosModule];
       mailserver = {
-        enable = true;
+        enable = false;
         stateVersion = 3;
         # debug = true;
+
+        # TODO investigate!
+        localDnsResolver = false; # this clashes with dnsmasq for grafana + VPN
 
         fqdn = "mail.barbara.bar";
         domains = ["barbara.bar"];
