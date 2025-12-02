@@ -5,7 +5,6 @@
     ...
   }: {
     nixos = {
-      #config, ...}: {
       networking.wireguard.interfaces = {
         wg0 = {
           privateKeyFile = "/etc/wireguard/privatekey";

@@ -1,10 +1,15 @@
-{ inputs, den, ... }:
 {
-  # create an `eg` (example!) namespace. (flake exposed)
-  imports = [ (inputs.den.namespace "eg" true) ];
+  inputs,
+  den,
+  ...
+}: {
+  imports = [
+    # create an `eg` (example!) namespace. (flake exposed)
+    (inputs.den.namespace "eg" true)
 
-  # you can have more than one namespace (false = not flake exposed)
-  # imports = [ (inputs.den.namespace "my" false) ];
+    # you can have more than one namespace (false = not flake exposed)
+    (inputs.den.namespace "fleet" false)
+  ];
 
   # you can also merge many namespaces from remote flakes.
   # keep in mind a namespace is defined only once, so give it an array:

@@ -5,7 +5,6 @@
     ...
   }: {
     nixos = {
-      #config, ...}: {
       services.dnsmasq = {
         enable = true;
 

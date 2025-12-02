@@ -128,7 +128,6 @@
       "AUTO_GENERATE_TITLE" = "true";
       "AUTO_OCR_TAG" = "paperless-gpt-ocr-auto";
       "AUTO_TAG" = "paperless-gpt-auto";
-      "CORRESPONDENT_BLACK_LIST" = "Daniel Bruder, Herr Bruder, Dr. Daniel Bruder, Daniel Milan Bruder";
       "CREATE_LOCAL_HOCR" = "true";
       "CREATE_LOCAL_PDF" = "true";
       "LLM_LANGUAGE" = "German";
@@ -142,8 +141,7 @@
       "OCR_PROCESS_MODE" = "image";
       "OCR_PROVIDER" = "llm";
       "OLLAMA_HOST" = "http://10.0.0.2:11434";
-      "PAPERLESS_API_TOKEN" = "3cd1e1849988cfedd2cd0d423ed72b4ddd236b89";
-      "PAPERLESS_BASE_URL" = "http://172.17.0.1:8000";
+      "PAPERLESS_BASE_URL" = "http://host.docker.internal:8000";
       "PAPERLESS_CUSTOM_FIELD_WRITING_MODE" = "update";
       "PDF_COPY_METADATA" = "true";
       "PDF_OCR_COMPLETE_TAG" = "paperless-gpt-ocr-complete";

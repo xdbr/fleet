@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  den.aspects.mailserver = {host, ...}: {
+  fleet.mailserver = {host, ...}: {
     nixos = {config, ...}: {
       imports = [inputs.simple-nixos-mailserver.nixosModule];
       mailserver = {

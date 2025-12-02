@@ -12,8 +12,7 @@
       <hetzner/qemu/kernel-modules>
       <fleet/facter>
       <fleet/sops>
-      # <fleet/mailserver>
-      # den.aspects.mailserver
+      <fleet/mailserver>
     ];
 
     nixos = {pkgs, ...}: {
