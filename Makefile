@@ -1,5 +1,8 @@
 default: check
 
+generate-paperless-nix-compose:
+	cd modules/aspects/paperless && compose2nix -inputs docker-compose.yaml -output _scanity-docker-compose.nix -project scanity #-runtime docker
+
 .PHONY: check write-flake flake update deploy
 
 check: #update
@@ -56,4 +59,5 @@ nixos-server-%: server-$$*
 						--flake ./systems/cx23#hetzner-cloud \
 						--target-host root@$$(hcloud server ip $*)
 	ssh-keygen -R $$(hcloud server ip $*)
+
 

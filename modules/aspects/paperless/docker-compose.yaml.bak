@@ -1,0 +1,163 @@
+# paperless-ngx docker compose
+# see below for more instructions
+
+services:
+  paperless-ngx:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+      - gotenberg
+      - tika
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/paperless-ngx/data:/usr/src/paperless/data
+      - ./data/paperless-ngx/media:/usr/src/paperless/media
+      - ./data/paperless-ngx/export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    env_file:
+      - ./config/docker-compose.env
+      - ./config/paperless-ngx.env
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD",
+    #       "curl",
+    #       "-H",
+    #       "Token b9e51317a6ad461a603a463ce5228e5c40d50cdb",
+    #       "http://localhost:8000/api/documents",
+    #     ]
+    #   interval: 7s
+    #   retries: 5
+    #   start_period: 7s
+    #   timeout: 7s
+
+  paperless-gpt:
+    image:  icereed/paperless-gpt:latest #paperless-dbr # Docker Hub # image: paperless-dbr
+    env_file: ./config/paperless-gpt.env
+    volumes:
+      - ./data/paperless-gpt/prompts:/app/prompts # Mount the prompts directory
+      - ./data/paperless-gpt/hocr:/app/hocr # Only if CREATE_LOCAL_HOCR is true
+      - ./data/paperless-gpt/pdf:/app/pdf # Only if CREATE_LOCAL_PDF is true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - paperless-ngx
+    # depends_on:
+    #   paperless-ngx:
+    #     condition: service_healthy
+    # network_mode: bridge
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+
+  # # ollama-webui:
+  # #   image: ghcr.io/open-webui/open-webui:main
+  # #   env_file: ./config/ollama-webui.env
+  # #   volumes:
+  # #     - ./data/ollama-webui:/app/backend/data
+  # #   ports:
+  # #     - 3000:8080
+  # #   extra_hosts:
+  # #     - host.docker.internal:host-gateway
+  # #   restart: unless-stopped
+  # #
+  broker:
+    image: docker.io/library/redis:8
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - redisdata:/data
+  db:
+    image: docker.io/library/postgres:17
+    restart: unless-stopped
+    volumes:
+      # - pgdata:/var/lib/postgresql/data
+      # - pgdata:/var/lib/postgresql/docker
+      - pgdata:/var/lib/postgresql
+    environment:
+      TZ: Europe/Berlin
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+      # PGDATA: /var/lib/postgresql/17/docker
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:8.22
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Berlin
+    # The gotenberg chromium route is used to convert .eml files. We do not
+    # want to allow external content like tracking pixels or even javascript.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+  tika:
+    image: docker.io/apache/tika:latest
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Berlin
+
+volumes:
+  data:
+  media:
+  pgdata:
+  redisdata:
+  ollama_data:
+  openwebui_data:
+# service:
+#   stirling-pdf:
+#     image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+#     ports:
+#       - '8080:8080'
+#     volumes:
+#       - ./StirlingPDF/trainingData:/usr/share/tessdata # Required for extra OCR languages
+#       - ./StirlingPDF/extraConfigs:/configs
+#       - ./StirlingPDF/customFiles:/customFiles/
+#       - ./StirlingPDF/logs:/logs/
+#       - ./StirlingPDF/pipeline:/pipeline/
+#     environment:
+#       - DISABLE_ADDITIONAL_FEATURES=false
+#       - LANGS=en_GB
+#   networks:
+#     # ollama-docker:
+#     host:
+#       name: host
+#       external: true
+#
+#
+# Docker Compose file for running paperless from the docker container registry.
+# This file contains everything paperless needs to run.
+# Paperless supports amd64, arm and arm64 hardware.
+#
+# All compose files of paperless configure paperless in the following way:
+#
+# - Paperless is (re)started on system boot, if it was running before shutdown.
+# - Docker volumes for storing data are managed by Docker.
+# - Folders for importing and exporting files are created in the same directory
+#   as this file and mounted to the correct folders inside the container.
+# - Paperless listens on port 8000.
+#
+# In addition to that, this Docker Compose file adds the following optional
+# configurations:
+#
+# - Instead of SQLite (default), PostgreSQL is used as the database server.
+# - Apache Tika and Gotenberg servers are started with paperless and paperless
+#   is configured to use these services. These provide support for consuming
+#   Office documents (Word, Excel, PowerPoint and their LibreOffice counter-
+#   parts).
+#
+# To install and update paperless with this file, do the following:
+#
+# - Copy this file as 'docker-compose.yml' and the files 'docker-compose.env'
+#   and '.env' into a folder.
+# - Run 'docker compose pull'.
+# - Run 'docker compose up -d'.
+#
+# For more extensive installation and update instructions, refer to the
+# documentation.
+# include:
+#   - compose/paperless-gpt.yml

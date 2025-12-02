@@ -4,7 +4,8 @@
     host,
     ...
   }: {
-    nixos = {config, ...}: {
+    nixos = {
+      #config, ...}: {
       networking.wireguard.interfaces = {
         wg0 = {
           privateKeyFile = "/etc/wireguard/privatekey";
@@ -31,6 +32,7 @@
       networking.firewall.interfaces.wg0.allowedTCPPorts = [
         80 # nginx
         443 # if you later enable ACME/SSL
+        11434
       ];
       # networking.firewall.interfaces.wg0.allowedUDPPorts = [];
     };

@@ -13,7 +13,7 @@
       <fleet/facter>
       <fleet/sops>
       # <fleet/mailserver>
-      den.aspects.mailserver
+      # den.aspects.mailserver
     ];
 
     nixos = {pkgs, ...}: {

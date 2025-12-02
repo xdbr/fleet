@@ -11,8 +11,7 @@
           server = {
             domain = "grafana.vip.barbara.bar";
             http_port = 2342;
-            http_addr = "10.0.0.1";
-            # Do not expose without VPN
+            http_addr = "127.0.0.1";
             enforce_domain = false;
           };
         };
@@ -29,29 +28,9 @@
         };
       };
 
-      services.dnsmasq = {
-        enable = true;
-
-        settings = {
-          # Listen *only* on the VPN interface so it's not exposed publicly
-          interface = "wg0";
-          listen-address = ["10.0.0.1" "127.0.0.1"];
-          bind-interfaces = true;
-
-          # We are authoritative for the internal subdomain,
-          # do not advertise our private entries publicly
-          local = "/vip.barbara.bar/";
-
-          # Define internal host(s)
-          address = [
-            "/vip.barbara.bar/10.0.0.1" # This is a wildcard already for all sub-domains
-            # "/grafana.vip.barbara.bar/10.0.0.1" # so this is redundant
-          ];
-
-          domain-needed = true; # do not forward single word names without a dot, e.g. localhost, or printer
-          bogus-priv = true;
-          log-queries = true;
-        };
+      systemd.services.dnsmasq = {
+        wants = ["sys-subsystem-net-devices-wg0.device"];
+        after = ["sys-subsystem-net-devices-wg0.device"];
       };
 
       networking.firewall = {
@@ -79,15 +58,8 @@
           forceSSL = true;
           listenAddresses = ["10.0.0.1"];
 
-          extraConfig = ''
-            # allow only VPN clients
-            allow 10.0.0.0/24;
-            deny all;
-          '';
-
           locations."/" = {
-            # proxyPass = "http://127.0.0.1:${toString config.services.grafana.settings.server.http_port}";
-            proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+            proxyPass = "http://127.0.0.1:${toString config.services.grafana.settings.server.http_port}";
             proxyWebsockets = true;
           };
         };
@@ -121,11 +93,7 @@
           }
           {
             job_name = "barbara.bar";
-            static_configs = [
-              {
-                targets = ["127.0.0.1:${toString config.services.prometheus.exporters.node.port}"];
-              }
-            ];
+            static_configs = [{targets = ["127.0.0.1:${toString config.services.prometheus.exporters.node.port}"];}];
           }
         ];
       };
